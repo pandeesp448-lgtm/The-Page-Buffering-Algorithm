@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Page Buffering Algorithm | Quantum OS Memory Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Three.js Core -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+    <div class="gradient-overlay"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo">OS Memory</div>
+        <ul class="nav-links">
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#solution">Solution</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#rescue">Rescue</a></li>
+            <li><a href="#advantages">Advantages</a></li>
+            <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀️ Day</button></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home">
+        <div class="hero">
+            <div class="hero-badge">⚡ Quantum OS Concept</div>
+            <h1>Page Buffering Algorithm: <span>Smarter Memory Management</span></h1>
+            <p class="hero-subtitle">
+                Boost OS performance by intelligently managing discarded pages.<br>
+                No more waiting for slow disk operations — keep processes running at full speed.
+            </p>
+            <a href="#problem" class="cta-button">
+                <span>Explore the Future</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem">
+        <div style="max-width: 1100px; width: 100%;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <div style="display: inline-block; background: rgba(255,51,102,0.15); border: 1px solid rgba(255,51,102,0.5); border-radius: 50px; padding: 0.4rem 1.2rem; color: #ff3366;">⚠️ The Challenge</div>
+                <h2 style="font-size: clamp(2rem, 4vw, 3rem); margin-top: 1rem;">Why Do We Need Page Buffering?</h2>
+            </div>
+            <div class="glass-card" style="display: flex; align-items: center; gap: 2rem; padding: 2.5rem; flex-wrap: wrap;">
+                <div style="font-size: 4rem; background: rgba(255,51,102,0.2); width: 100px; height: 100px; border-radius: 30px; display: flex; align-items: center; justify-content: center;">⚠️</div>
+                <div style="flex: 1;">
+                    <h3 style="color: #ff3366; font-size: 1.8rem; margin-bottom: 1rem;">The FIFO Bottleneck</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.8;">Traditional page replacement algorithms like FIFO suffer from a critical performance issue: <strong>every page fault requires writing to disk</strong>, which is extremely slow. When a process needs a new page, the system must wait for the victim page to be written to secondary storage. This creates unnecessary delays and keeps the CPU idle, wasting precious processing time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Two Pools Section -->
+    <section id="solution" style="background: rgba(1,1,8,0.4);">
+        <div style="max-width: 1200px; width: 100%;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <div style="display: inline-block; background: rgba(0,242,255,0.15); border: 1px solid rgba(0,242,255,0.5); border-radius: 50px; padding: 0.4rem 1.2rem; color: #00f2ff;">💡 The Solution</div>
+                <h2 style="font-size: clamp(2rem, 4vw, 3rem); margin-top: 1rem;">The Two Pools Strategy</h2>
+                <p style="color: var(--text-secondary); margin-top: 1rem;">Page buffering maintains two separate pools to optimize memory operations</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                <div class="pool-card free" id="freePoolCard">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: #00ff88; width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 0 15px #00ff88;">🟢</div>
+                        <h3 style="font-size: 1.6rem;">Free Frame Pool</h3>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Contains clean, unmodified frames that are immediately available for use. When a page fault occurs, the OS can instantly allocate a frame from this pool without any disk write operations.</p>
+                    <div style="display: flex; gap: 0.8rem; justify-content: center;">
+                        <div style="background: rgba(0,255,136,0.2); border: 1px solid #00ff88; border-radius: 12px; padding: 0.8rem; width: 60px; text-align: center;">F1</div>
+                        <div style="background: rgba(0,255,136,0.2); border: 1px solid #00ff88; border-radius: 12px; padding: 0.8rem; width: 60px; text-align: center;">F2</div>
+                        <div style="background: rgba(0,255,136,0.2); border: 1px solid #00ff88; border-radius: 12px; padding: 0.8rem; width: 60px; text-align: center;">F3</div>
+                    </div>
+                </div>
+                <div class="pool-card modified" id="modifiedPoolCard">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: #ff6600; width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 0 15px #ff6600;">🟡</div>
+                        <h3 style="font-size: 1.6rem;">Modified Frame Pool</h3>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Holds "dirty" frames that have been modified and need to be written to disk. These are processed in the background when the I/O device is idle, enabling batch writes for better efficiency.</p>
+                    <div style="display: flex; gap: 0.8rem; justify-content: center;">
+                        <div style="background: rgba(255,102,0,0.2); border: 1px solid #ff6600; border-radius: 12px; padding: 0.8rem; width: 60px; text-align: center;">M1</div>
+                        <div style="background: rgba(255,102,0,0.2); border: 1px solid #ff6600; border-radius: 12px; padding: 0.8rem; width: 60px; text-align: center;">M2</div>
+                        <div style="background: rgba(255,102,0,0.2); border: 1px solid #ff6600; border-radius: 12px; padding: 0.8rem; width: 60px; text-align: center;">M3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Timeline -->
+    <section id="process">
+        <div style="max-width: 1000px; width: 100%;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <div style="display: inline-block; background: rgba(176,0,255,0.15); border: 1px solid rgba(176,0,255,0.5); border-radius: 50px; padding: 0.4rem 1.2rem; color: #b000ff;">🔄 How It Works</div>
+                <h2 style="font-size: clamp(2rem, 4vw, 3rem); margin-top: 1rem;">Page Fault Process</h2>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div class="glass-card" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.8rem;">
+                    <div class="timeline-node">1</div>
+                    <div><h3 style="color: #00f2ff;">Victim Page Selected</h3><p style="color: var(--text-secondary);">The page replacement algorithm identifies which page needs to be replaced.</p></div>
+                </div>
+                <div class="glass-card" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.8rem;">
+                    <div class="timeline-node">2</div>
+                    <div><h3 style="color: #00f2ff;">Instant Load from Free Pool</h3><p style="color: var(--text-secondary);">The requested page is immediately loaded into a free frame. No waiting for disk writes!</p></div>
+                </div>
+                <div class="glass-card" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.8rem;">
+                    <div class="timeline-node">3</div>
+                    <div><h3 style="color: #00f2ff;">Victim Sent to Pool</h3><p style="color: var(--text-secondary);">Victim page moved to Free Pool (if clean) or Modified Pool (if dirty) for later processing.</p></div>
+                </div>
+            </div>
+            <!-- Interactive Demo -->
+            <div class="glass-card" style="margin-top: 3rem; padding: 2rem; text-align: center;">
+                <h3 style="color: #00f2ff; margin-bottom: 1rem;">🎮 Interactive Simulation</h3>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem;">
+                    <button class="demo-btn" id="simulateBtn">Simulate Page Fault</button>
+                    <button class="demo-btn" id="resetSimBtn">Reset</button>
+                </div>
+                <div id="demoDisplay" style="min-height: 150px; background: rgba(0,0,0,0.4); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                    Click "Simulate Page Fault" to see the algorithm in action
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rescue Magic Section -->
+    <section id="rescue" style="background: radial-gradient(circle at 50% 30%, rgba(0,242,255,0.08), transparent);">
+        <div style="text-align: center; max-width: 1000px;">
+            <div style="display: inline-block; background: linear-gradient(135deg, rgba(0,242,255,0.2), rgba(176,0,255,0.2)); border-radius: 50px; padding: 0.5rem 1.5rem; margin-bottom: 2rem; color: #00f2ff;">✨ The Magic Feature</div>
+            <h2 style="font-size: clamp(2.5rem, 5vw, 4rem); background: linear-gradient(135deg, #00f2ff, #b000ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1.5rem;">The "Rescue" Mechanism</h2>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 3rem;">When a process references a page that was recently replaced, the OS can <strong>instantly rescue it</strong> from the free or modified pools without accessing the disk. This eliminates costly I/O!</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                <div class="rescue-box" id="rescue1" style="width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <div style="font-size: 3rem;">📄</div>
+                    <div>Page Needed</div>
+                </div>
+                <div style="font-size: 2rem; color: #00f2ff;">→</div>
+                <div class="rescue-box" id="rescue2" style="width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="font-size: 3rem;">🔍</div>
+                    <div>Check Pools</div>
+                </div>
+                <div style="font-size: 2rem; color: #00f2ff;">→</div>
+                <div class="rescue-box" id="rescue3" style="width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="font-size: 3rem;">⚡</div>
+                    <div>Instant Rescue!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Grid -->
+    <section id="advantages">
+        <div style="max-width: 1200px; width: 100%;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <div style="display: inline-block; background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.5); border-radius: 50px; padding: 0.4rem 1.2rem; color: #00ff88;">🏆 Benefits</div>
+                <h2 style="font-size: clamp(2rem, 4vw, 3rem); margin-top: 1rem;">Key Advantages</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="advantage-card"><div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div><h3>Faster Restarts</h3><p style="color: var(--text-secondary);">Processes resume execution immediately after a page fault since new pages are loaded from the free pool without waiting for disk writes.</p></div>
+                <div class="advantage-card"><div style="font-size: 3rem; margin-bottom: 1rem;">💾</div><h3>Fewer Disk Reads</h3><p style="color: var(--text-secondary);">Recently replaced pages can be rescued from pools, eliminating the need to read them from disk again.</p></div>
+                <div class="advantage-card"><div style="font-size: 3rem; margin-bottom: 1rem;">📊</div><h3>Optimized Batch Writes</h3><p style="color: var(--text-secondary);">Modified pages are written to disk in batches during idle periods, reducing I/O overhead.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: rgba(1,1,8,0.9); border-top: 1px solid rgba(0,242,255,0.3); padding: 3rem 5%; text-align: center;">
+        <div style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem;">Page Buffering Algorithm</div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">A modern approach to operating system memory management</p>
+        <div class="creator-name">Created by Pandeeswaran Pichaipandi</div>
+        <div style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 2rem;">© 2026 Operating Systems Presentation. All rights reserved.</div>
+    </footer>
+
+    <script type="module" src="js/three-bg.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
